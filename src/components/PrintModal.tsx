@@ -38,7 +38,77 @@ export const PrintModal: React.FC<PrintModalProps> = ({
   const currentDayData = DAYS_DATA.find((d) => d.id === activeDay) || DAYS_DATA[0];
 
   const handlePrint = () => {
-    window.print();
+    try {
+      window.print();
+    } catch (e) {
+      console.warn('Direct print blocked or unavailable:', e);
+      if (printMode === 'certificate') {
+        handleDownloadCertificate();
+      } else {
+        handleDownloadTxt();
+      }
+    }
+  };
+
+  const handleDownloadCertificate = () => {
+    const html = `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Certificado de Conclusão - Método Rotina Leve</title>
+  <style>
+    @page { size: A4 portrait; margin: 15mm; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #FAF8F5; margin: 0; padding: 24px; color: #1F2E24; }
+    .cert-card { max-width: 650px; margin: 20px auto; background: #FCFAF7; border: 4px double #C2B7A3; border-radius: 24px; padding: 40px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .logo { width: 90px; height: 90px; object-fit: contain; margin: 0 auto 16px; border-radius: 20px; background: white; border: 1px solid #DFD7CB; padding: 10px; display: block; }
+    .tag { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; font-weight: bold; color: #4B7356; }
+    h1 { font-family: Georgia, serif; font-size: 28px; color: #183122; font-weight: normal; margin: 8px 0; }
+    .divider { width: 90px; height: 2px; background: #8FA795; margin: 12px auto; }
+    p { font-size: 14px; line-height: 1.6; color: #3E5545; }
+    .box { background: white; border: 1px solid #E2DAD0; border-radius: 14px; padding: 14px; text-align: left; margin: 20px 0; font-size: 13px; }
+    .meta { border-top: 1px solid #DFD6C8; padding-top: 16px; margin-top: 24px; display: flex; justify-content: space-between; font-size: 12px; color: #637A6A; }
+    .quote { font-family: Georgia, serif; font-style: italic; font-size: 12px; color: #526B59; margin-top: 20px; }
+    @media print {
+      body { background: white; padding: 0; }
+      .cert-card { box-shadow: none; border-color: #888; }
+    }
+  </style>
+</head>
+<body>
+  <div class="cert-card">
+    <img src="https://i.ibb.co/S7frFYCr/Chat-GPT-Image-24-de-set-de-2026-10-58-16.png" class="logo" alt="Logo LEVE" />
+    <div class="tag">Certificado Oficial de Conclusão</div>
+    <h1>Desafio 30 Dias — Minha Rotina Leve</h1>
+    <div class="divider"></div>
+    <p>Certificamos que você completou com dedicação e presença os 30 dias do <strong>Método Rotina Leve</strong>.</p>
+    <p>Pequenos passos diários para organizar sua rotina com mais clareza, intenção e leveza — sem cobrança e no seu ritmo.</p>
+    ${day30Data.rotinaLeveSignificado || day30Data.compromissoComigo ? `
+      <div class="box">
+        ${day30Data.rotinaLeveSignificado ? `<div><strong>Para mim, Rotina Leve é:</strong> <em>“${day30Data.rotinaLeveSignificado}”</em></div>` : ''}
+        ${day30Data.compromissoComigo ? `<div style="margin-top: 8px;"><strong>Meu compromisso pessoal:</strong> <em>“${day30Data.compromissoComigo}”</em></div>` : ''}
+      </div>
+    ` : ''}
+    <div class="meta">
+      <div><strong>Status:</strong> ${completedDays.length} de 30 dias concluídos</div>
+      <div><strong>Data:</strong> ${new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}</div>
+    </div>
+    <div class="quote">“Sua rotina não precisa ser perfeita. Ela precisa fazer sentido para a vida que você realmente tem.”</div>
+  </div>
+  <script>
+    window.addEventListener('load', () => { setTimeout(() => { window.print(); }, 400); });
+  </script>
+</body>
+</html>`;
+
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'Certificado_Rotina_Leve.html';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   const handleDownloadTxt = () => {
@@ -143,10 +213,12 @@ export const PrintModal: React.FC<PrintModalProps> = ({
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
               <h2 className="font-serif text-lg sm:text-xl font-medium text-[#183122]">
-                Baixar e Imprimir os Desafios
+                {printMode === 'certificate' ? 'Certificado Oficial de Conclusão' : 'Baixar e Imprimir os Desafios'}
               </h2>
               <p className="text-xs text-[#597160]">
-                Gere um caderno impresso ou salve em PDF para levar sua rotina no papel.
+                {printMode === 'certificate'
+                  ? 'Gere o certificado oficial do Desafio 30 Dias para salvar em PDF ou imprimir.'
+                  : 'Gere um caderno impresso ou salve em PDF para levar sua rotina no papel.'}
               </p>
             </div>
 
@@ -159,14 +231,27 @@ export const PrintModal: React.FC<PrintModalProps> = ({
                 <Printer className="w-4 h-4" />
                 <span>Imprimir / Salvar PDF</span>
               </button>
-              <button
-                onClick={handleDownloadTxt}
-                className="px-3.5 py-2 bg-white hover:bg-[#F2ECE1] border border-[#DDD6C8] text-[#2F4937] text-xs font-medium rounded-xl cursor-pointer flex items-center gap-1.5 transition-all"
-                title="Baixar em formato texto (.txt)"
-              >
-                <Download className="w-4 h-4" />
-                <span className="hidden sm:inline">Baixar Texto (.txt)</span>
-              </button>
+
+              {printMode === 'certificate' ? (
+                <button
+                  onClick={handleDownloadCertificate}
+                  className="px-3.5 py-2 bg-white hover:bg-[#F2ECE1] border border-[#DDD6C8] text-[#2F4937] text-xs font-medium rounded-xl cursor-pointer flex items-center gap-1.5 transition-all"
+                  title="Baixar arquivo de certificado para abrir e salvar em PDF"
+                >
+                  <Download className="w-4 h-4 text-[#355A3F]" />
+                  <span className="hidden sm:inline">Baixar Certificado (.html)</span>
+                </button>
+              ) : (
+                <button
+                  onClick={handleDownloadTxt}
+                  className="px-3.5 py-2 bg-white hover:bg-[#F2ECE1] border border-[#DDD6C8] text-[#2F4937] text-xs font-medium rounded-xl cursor-pointer flex items-center gap-1.5 transition-all"
+                  title="Baixar em formato texto (.txt)"
+                >
+                  <Download className="w-4 h-4" />
+                  <span className="hidden sm:inline">Baixar Texto (.txt)</span>
+                </button>
+              )}
+
               <button
                 onClick={onClose}
                 className="w-8 h-8 rounded-full hover:bg-[#EAE4D9] flex items-center justify-center text-[#55695C] cursor-pointer"

@@ -38,6 +38,11 @@ html {
     color: #1a1a1a !important;
   }
 
+  /* Hide background application during print */
+  header, main, footer {
+    display: none !important;
+  }
+
   .print-page-break {
     page-break-after: always;
     break-after: page;
@@ -49,6 +54,7 @@ html {
   }
 
   .print-container {
+    display: block !important;
     max-height: none !important;
     overflow: visible !important;
     box-shadow: none !important;
