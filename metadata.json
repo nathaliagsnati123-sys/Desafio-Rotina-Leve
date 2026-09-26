@@ -1,0 +1,6 @@
+{
+  "name": "Desafio 30 Dias — Minha Rotina Leve",
+  "description": "30 dias. Pequenas ações. Uma rotina mais consciente. Uma experiência simples, acolhedora e motivadora para organizar o que realmente importa.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
