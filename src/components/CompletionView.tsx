@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Day30Manifesto } from '../types';
 import { PrintMode } from './PrintModal';
 import {
@@ -8,8 +8,6 @@ import {
   Award,
   Download,
   ExternalLink,
-  Copy,
-  Check,
 } from 'lucide-react';
 
 interface CompletionViewProps {
@@ -25,35 +23,7 @@ export const CompletionView: React.FC<CompletionViewProps> = ({
   onGoToDay30,
   onOpenPrintModal,
 }) => {
-  const [copiedLink, setCopiedLink] = useState(false);
   const isChallengeComplete = completedCount >= 30;
-
-  const handleOpenApp = () => {
-    try {
-      const opened = window.open('https://leve-seven.vercel.app/', '_blank', 'noopener,noreferrer');
-      if (!opened) {
-        // If popup was blocked in preview/browser
-        navigator.clipboard?.writeText('https://leve-seven.vercel.app/');
-        setCopiedLink(true);
-        setTimeout(() => setCopiedLink(false), 3000);
-      }
-    } catch {
-      navigator.clipboard?.writeText('https://leve-seven.vercel.app/');
-      setCopiedLink(true);
-      setTimeout(() => setCopiedLink(false), 3000);
-    }
-  };
-
-  const handleCopyLink = () => {
-    try {
-      navigator.clipboard?.writeText('https://leve-seven.vercel.app/');
-      setCopiedLink(true);
-      setTimeout(() => setCopiedLink(false), 3000);
-    } catch {
-      setCopiedLink(true);
-      setTimeout(() => setCopiedLink(false), 3000);
-    }
-  };
 
   return (
     <div className="space-y-10 sm:space-y-12 pb-20">
@@ -193,47 +163,15 @@ export const CompletionView: React.FC<CompletionViewProps> = ({
             Acesse o aplicativo LEVE para manter seus hábitos, rotinas e anotações organizadas no seu dia a dia.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-1">
+          <div className="pt-2">
             <a
               href="https://leve-seven.vercel.app/"
               target="_blank"
               rel="noopener noreferrer"
-              onClick={handleOpenApp}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#2B4E36] hover:bg-[#203D2A] text-white text-sm font-semibold rounded-2xl shadow-sm hover:shadow transition-all duration-150 active:scale-[0.98] cursor-pointer"
+              className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-[#2B4E36] hover:bg-[#203D2A] text-white text-sm font-semibold rounded-2xl shadow-sm hover:shadow transition-all duration-150 active:scale-[0.98] cursor-pointer"
             >
               <span>Acessar o Aplicativo LEVE</span>
               <ExternalLink className="w-4 h-4" />
-            </a>
-
-            <button
-              type="button"
-              onClick={handleCopyLink}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 bg-[#FAF8F5] hover:bg-[#F2ECE1] text-[#344F3B] border border-[#D5CDC0] text-sm font-medium rounded-2xl transition-all cursor-pointer active:scale-[0.98]"
-              title="Copiar link do aplicativo"
-            >
-              {copiedLink ? (
-                <>
-                  <Check className="w-4 h-4 text-[#2E6B3E]" />
-                  <span className="text-[#2E6B3E] font-semibold">Link Copiado!</span>
-                </>
-              ) : (
-                <>
-                  <Copy className="w-4 h-4 text-[#56735E]" />
-                  <span>Copiar Link</span>
-                </>
-              )}
-            </button>
-          </div>
-
-          <div className="pt-2 text-xs text-[#5E7564]">
-            Link direto:{' '}
-            <a
-              href="https://leve-seven.vercel.app/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-mono text-[#2B4E36] underline hover:text-[#183122] transition-colors"
-            >
-              https://leve-seven.vercel.app/
             </a>
           </div>
         </div>

@@ -20,8 +20,8 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const navItems = [
     { id: 'home', label: 'Início', icon: Home },
-    { id: 'progress', label: 'Meu Progresso', icon: BarChart3 },
     { id: 'challenge', label: 'Desafio', icon: Compass },
+    { id: 'progress', label: 'Meu Progresso', icon: BarChart3 },
     { id: 'how-it-works', label: 'Como Funciona', icon: HelpCircle },
     { id: 'completion', label: 'Finalização', icon: Sparkles },
   ] as const;
@@ -58,16 +58,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               Início
             </button>
             <button
-              onClick={() => setCurrentTab('progress')}
-              className={`hover:text-[#1F382B] transition-colors py-1 cursor-pointer relative ${
-                currentTab === 'progress'
-                  ? 'text-[#1F382B] font-semibold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-[#4D7257]'
-                  : ''
-              }`}
-            >
-              Meu Progresso
-            </button>
-            <button
               onClick={() => setCurrentTab('challenge')}
               className={`hover:text-[#1F382B] transition-colors py-1 cursor-pointer relative ${
                 currentTab === 'challenge'
@@ -76,6 +66,16 @@ export const Navbar: React.FC<NavbarProps> = ({
               }`}
             >
               Desafio
+            </button>
+            <button
+              onClick={() => setCurrentTab('progress')}
+              className={`hover:text-[#1F382B] transition-colors py-1 cursor-pointer relative ${
+                currentTab === 'progress'
+                  ? 'text-[#1F382B] font-semibold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-[#4D7257]'
+                  : ''
+              }`}
+            >
+              Meu Progresso
             </button>
             <button
               onClick={() => setCurrentTab('how-it-works')}
